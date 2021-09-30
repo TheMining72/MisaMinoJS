@@ -1,14 +1,11 @@
 #include <napi.h>
 #include "wrapped.h"
-#include "MisaMinoNET\MisaMinoNET\MisaMino\main.h"
-
-Callback Abort = 0;
 
 Napi::Object InitAll(Napi::Env env, Napi::Object exports) {
-    set_abort(Abort);
+ //   set_abort(abort);
     
     Napi::Object raw = Napi::Object::New(env);
-    raw.Set("abort", Napi::Function::New(env, abortW));
+    //raw.Set("abort", Napi::Function::New(env, abortW));
     raw.Set("configure", Napi::Function::New(env, configureW));
     raw.Set("update_next", Napi::Function::New(env, update_nextW));
     raw.Set("update_current", Napi::Function::New(env, update_currentW));

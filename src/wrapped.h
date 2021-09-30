@@ -2,19 +2,17 @@
 #define WRAPPED_H
 #include <napi.h>
 
-void abortW(Napi::CallbackInfo&);
-void configureW(Napi::CallbackInfo&);
-void update_nextW(Napi::CallbackInfo&);
-void update_currentW(Napi::CallbackInfo&);
-void update_holdW(Napi::CallbackInfo&);
-void update_incomingW(Napi::CallbackInfo&);
-void update_comboW(Napi::CallbackInfo&);
-void update_b2bW(Napi::CallbackInfo&);
-void update_fieldW(Napi::CallbackInfo&);
-void update_resetW(Napi::CallbackInfo&);
-void actionW(Napi::CallbackInfo&);
-void aliveW(Napi::CallbackInfo&);
-void findpathW(Napi::CallbackInfo&);
-void actionW(Napi::CallbackInfo&);
+napi_value configureW(const Napi::CallbackInfo& info);
+napi_value update_nextW(const Napi::CallbackInfo& info);
+napi_value update_currentW(const Napi::CallbackInfo& info);
+napi_value update_holdW(const Napi::CallbackInfo& info);
+napi_value update_incomingW(const Napi::CallbackInfo& info);
+napi_value update_comboW(const Napi::CallbackInfo& info);
+napi_value update_b2bW(const Napi::CallbackInfo& info);
+napi_value update_fieldW(const Napi::CallbackInfo& info);
+napi_value update_resetW(const Napi::CallbackInfo& info);
+napi_value actionW(const Napi::CallbackInfo& info);
+Napi::Boolean aliveW(const Napi::CallbackInfo& info);
+napi_value findpathW(const Napi::CallbackInfo& info);
 
 #endif

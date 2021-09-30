@@ -1,18 +1,30 @@
 #include <napi.h>
-#include "wrapped.h"
-#include "MisaMinoNET\MisaMinoNET\MisaMino\main.h"
+#include "./MisaMinoNET/MisaMinoNET/MisaMino/main.h"
 
-using namespace std;
+extern "C" void set_abort(Callback handler);
+extern "C" void configure(AI::AI_Param param, bool holdAllowed, bool allSpin, bool TSDonly, int search_width, bool allow180, bool srsplus);
+extern "C" void update_next(const char* queue);
+extern "C" void update_current(const char* piece);
+extern "C" void update_hold(const char* piece);
+extern "C" void update_incoming(int attack);
+extern "C" void update_combo(int combo);
+extern "C" void update_b2b(int b2b);
+extern "C" void update_field(const char* field);
+extern "C" void update_reset();
+extern "C" void action(char* str, int len);
+extern "C" bool alive();
+extern "C" void findpath(const char* _field, const char* _piece, int x, int y, int r, bool hold, char* str, int len);
 
-void abortW(const Napi::CallbackInfo& info) {
-    Abort();
-    return;
-}
+//Callback abort = 0;
+
+//void abortW(const Napi::CallbackInfo& info) {
+//    abort();
+//    return nullptr;
+//}
 
 // Object, Boolean, Boolean, Boolean, Number, Boolean, Boolean
-void configureW(const Napi::CallbackInfo& info) {
+napi_value configureW(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-
     // 0 Object > AI_Param
     Napi::Object obj0 = info[0].As<Napi::Object>();
     AI::AI_Param arg0 = AI::AI_Param();
@@ -64,23 +76,22 @@ void configureW(const Napi::CallbackInfo& info) {
         arg5,
         arg6
     );
-    return;
+    return nullptr;
 };
 
 // Uint8Array
-void update_nextW(const Napi::CallbackInfo& info) {
+napi_value update_nextW(const Napi::CallbackInfo& info) {
 
     // 0 Uint8Array > char*
     Napi::Uint8Array arr0 = info[0].As<Napi::Uint8Array>();
     size_t length0 = arr0.ElementLength();
     char* arg0 = reinterpret_cast<char*>(arr0.ArrayBuffer().Data());
-
     update_next(arg0);
-    return;
+    return nullptr;
 }
 
 // Uint8Array
-void update_currentW(const Napi::CallbackInfo& info) {
+napi_value update_currentW(const Napi::CallbackInfo& info) {
 
     // 0 Uint8Array > char*
     Napi::Uint8Array arr0 = info[0].As<Napi::Uint8Array>();
@@ -88,11 +99,11 @@ void update_currentW(const Napi::CallbackInfo& info) {
     char* arg0 = reinterpret_cast<char*>(arr0.ArrayBuffer().Data());
 
     update_current(arg0);
-    return;
+    return nullptr;
 }
 
 // Uint8Array
-void update_holdW(const Napi::CallbackInfo& info) {
+napi_value update_holdW(const Napi::CallbackInfo& info) {
 
     // 0 Uint8Array > char*
     Napi::Uint8Array arr0 = info[0].As<Napi::Uint8Array>();
@@ -100,41 +111,41 @@ void update_holdW(const Napi::CallbackInfo& info) {
     char* arg0 = reinterpret_cast<char*>(arr0.ArrayBuffer().Data());
 
     update_hold(arg0);
-    return;
+    return nullptr;
 }
 
 // Number
-void update_incomingW(const Napi::CallbackInfo& info) {
+napi_value update_incomingW(const Napi::CallbackInfo& info) {
 
     // 0
     int arg0 = info[0].As<Napi::Number>();
 
     update_incoming(arg0);
-    return;
+    return nullptr;
 }
 
 // Number
-void update_comboW(const Napi::CallbackInfo& info) {
+napi_value update_comboW(const Napi::CallbackInfo& info) {
 
     // 0
     int arg0 = info[0].As<Napi::Number>();
 
     update_combo(arg0);
-    return;
+    return nullptr;
 }
 
 // Number
-void update_b2bW(const Napi::CallbackInfo& info) {
+napi_value update_b2bW(const Napi::CallbackInfo& info) {
 
     // 0
     int arg0 = info[0].As<Napi::Number>();
 
     update_b2b(arg0);
-    return;
+    return nullptr;
 }
 
 // Number
-void update_fieldW(const Napi::CallbackInfo& info) {
+napi_value update_fieldW(const Napi::CallbackInfo& info) {
 
     // 0 Uint8Array > char*
     Napi::Uint8Array arr0 = info[0].As<Napi::Uint8Array>();
@@ -142,16 +153,16 @@ void update_fieldW(const Napi::CallbackInfo& info) {
     char* arg0 = reinterpret_cast<char*>(arr0.ArrayBuffer().Data());
 
     update_field(arg0);
-    return;
+    return nullptr;
 }
 
-void update_resetW(const Napi::CallbackInfo& info) {
+napi_value update_resetW(const Napi::CallbackInfo& info) {
     update_reset();
-    return;
+    return nullptr;
 }
 
 // Uint8Array, Number
-void actionW(const Napi::CallbackInfo& info) {
+napi_value actionW(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     // 0 Uint8Array > char*
@@ -163,7 +174,7 @@ void actionW(const Napi::CallbackInfo& info) {
     int arg1 = info[1].As<Napi::Number>();
 
     action(arg0, arg1);
-    return;
+    return nullptr;
 }
 
 Napi::Boolean aliveW(const Napi::CallbackInfo& info) {
@@ -173,7 +184,7 @@ Napi::Boolean aliveW(const Napi::CallbackInfo& info) {
 }
 
 // Uint8Array, Uint8Array, Number, Number, Number, Boolean, Uint8Array, Number
-void findpathW(const Napi::CallbackInfo& info) {
+napi_value findpathW(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     // 0 Uint8array > char*
@@ -216,5 +227,5 @@ void findpathW(const Napi::CallbackInfo& info) {
         arg6,
         arg7
     );
-    return;
+    return nullptr;
 }

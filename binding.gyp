@@ -1,13 +1,10 @@
 {
   "targets": [
     {
-      "target_name": "MisaMinoJS",
+      "target_name": "MisaMino",
       "cflags!": [ "-fno-exceptions" ],
       "cflags_cc!": [ "-fno-exceptions" ],
       "sources": [
-        "./src/index.cpp",
-        "./src/wrapped.cpp",
-        "./src/wrapped.h",
         "./src/MisaMinoNET/MisaMinoNET/MisaMino/Bot.cpp"
         "./src/MisaMinoNET/MisaMinoNET/MisaMino/callback.cpp"
         "./src/MisaMinoNET/MisaMinoNET/MisaMino/gamepool.cpp"
@@ -34,6 +31,25 @@
         "<!@(node -p \"require('node-addon-api').include\")"
       ],
       'libraries': [],
+      'dependencies': [
+        "<!(node -p \"require('node-addon-api').gyp\")"
+      ],
+      'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ]
+    },
+    {
+      
+      "target_name": "MisaMinoJS",
+      "cflags!": [ "-fno-exceptions" ],
+      "cflags_cc!": [ "-fno-exceptions" ],
+      "sources": [
+        "./src/index.cpp"
+      ],
+      'include_dirs': [
+        "<!@(node -p \"require('node-addon-api').include\")"
+      ],
+      'libraries': [
+        "./build/Release/MisaMino.node"
+      ],
       'dependencies': [
         "<!(node -p \"require('node-addon-api').gyp\")"
       ],

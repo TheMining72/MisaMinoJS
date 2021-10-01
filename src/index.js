@@ -1,1 +1,3 @@
-exports = require('bindings')('MisaMinoJS');
+const stuff = require('bindings')('MisaMinoJS')
+
+exports.f = stuff;

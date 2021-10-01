@@ -83,16 +83,10 @@ napi_value configureW(const Napi::CallbackInfo& info) {
 napi_value update_nextW(const Napi::CallbackInfo& info) {
 
     // 0 Uint8Array > char*
-    Napi::Array arr0 = info[0].As<Napi::Array>();
-    Napi::Object arrObj0 = info[0].As<Napi::Array>();
-    std::string str0 = "";
-    for (int i = 0; i < arr0.Length() - 1; i++) {
-        str0 += ",";
-        str0 += arr0[i];
-        Napi::Value num0 = arr0[0];
-    }
+    Napi::Uint8Array arr0 = info[0].As<Napi::Uint8Array>();
     size_t length0 = arr0.ElementLength();
     char* arg0 = reinterpret_cast<char*>(arr0.ArrayBuffer().Data());
+    
     update_next(arg0);
     return nullptr;
 }

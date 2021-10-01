@@ -1,5 +1,5 @@
 #include <napi.h>
-#include "./MisaMino/MisaMinoNET/MisaMino/main.h"
+#include "./MisaMinoNET/MisaMinoNET/MisaMino/main.h"
 
 extern "C" void set_abort(Callback handler);
 extern "C" void configure(AI::AI_Param param, bool holdAllowed, bool allSpin, bool TSDonly, int search_width, bool allow180, bool srsplus);

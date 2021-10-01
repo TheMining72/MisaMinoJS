@@ -2,6 +2,8 @@
 #include "wrapped.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    exports.Set("finished_add", Napi::Function::New(env, finished_add));
+    exports.Set("finished_del", Napi::Function::New(env, finished_del));
     // exports.Set("abort", Napi::Function::New(env, abortW));
     exports.Set("configure", Napi::Function::New(env, configureW));
     exports.Set("update_next", Napi::Function::New(env, update_nextW));
@@ -14,7 +16,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set("update_reset", Napi::Function::New(env, update_resetW));
     exports.Set("action", Napi::Function::New(env, actionW));
     exports.Set("alive", Napi::Function::New(env, aliveW));
-    exports.Set("findpath", Napi::Function::New(env, findpathW));
+    //exports.Set("findpath", Napi::Function::New(env, findpathW));
     return exports;
 }
 

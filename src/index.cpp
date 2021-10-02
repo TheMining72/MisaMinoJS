@@ -1,7 +1,15 @@
 #include <napi.h>
 #include "wrapped.h"
 
+bool first_setup = true;
+extern "C" void setup();
+
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    if (first_setup) {
+        setup();
+        first_setup = false;
+    }
+
     exports.Set("finished_add", Napi::Function::New(env, finished_add));
     exports.Set("finished_del", Napi::Function::New(env, finished_del));
     // exports.Set("abort", Napi::Function::New(env, abortW));

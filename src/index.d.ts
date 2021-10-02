@@ -10,7 +10,7 @@ export interface MisaMino {
    * @param {boolean} [srsplus] - Enables the SRS+ system as opposed to using regular SRS.
    */
   configure(
-    param: Partial<MisaMinoParameters>,
+    param?: Partial<MisaMinoParameters>,
     holdAllowed?: boolean,
     allSpin?: boolean,
     TSDonly?: boolean,
@@ -37,7 +37,17 @@ export interface MisaMino {
   /** Sets the current b2b, will be used by the `action` that is called. */
   update_b2b(b2b: number): null;
 
+  /** Caluclates an action. */
   action(): Move;
+
+  /** Is the bot currently alive and hasn't topped out. */
+  alive(): boolean;
+
+  /** Is the bot is currently running. */
+  is_running(): boolean;
+
+  /** Updates the current field to be used by action. (The field parameter uses the format `field[x][y]`)  */
+  update_field(field: Pieces[][]): null;
 }
 
 export interface MisaMinoParameters {
@@ -177,3 +187,5 @@ export declare enum Instruction {
    */
   REFRESH = 12,
 }
+
+export var MisaMino: MisaMino;

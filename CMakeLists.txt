@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 # MisaMino itself, build as a static library
 project(MisaMino)
-file(GLOB SOURCE_FILES "src/MisaMinoNET/MisaMinoNET/MisaMino/*.cpp" "src/MisaMinoNET/MisaMinoNET/MisaMino/*.h")
+file(GLOB SOURCE_FILES "src/MisaMino/MisaMino/*.cpp" "src/MisaMino/MisaMino/*.h")
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 
 # MisaMinoJS, wrapping MisaMino functions for JS to call

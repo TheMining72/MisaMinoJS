@@ -1,18 +1,25 @@
 #include <napi.h>
 #include "wrapped.h"
+#include "./MisaMino/MisaMino/main.h"
 
 bool first_setup = true;
 extern "C" void setup();
+extern "C" void set_abort(Callback handler);
+
+int cb () {
+    return false;
+}
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     if (first_setup) {
         setup();
+        set_abort(cb);
         first_setup = false;
     }
 
     exports.Set("finished_add", Napi::Function::New(env, finished_add));
     exports.Set("finished_del", Napi::Function::New(env, finished_del));
-    // exports.Set("abort", Napi::Function::New(env, abortW));
+    exports.Set("abort", Napi::Function::New(env, abort_bot));
     exports.Set("configure", Napi::Function::New(env, configureW));
     exports.Set("update_next", Napi::Function::New(env, update_nextW));
     exports.Set("update_current", Napi::Function::New(env, update_currentW));

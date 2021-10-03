@@ -167,31 +167,30 @@ napi_value update_b2bW(const Napi::CallbackInfo& info) {
 // Number[][]
 napi_value update_fieldW(const Napi::CallbackInfo& info) {
     // Number[][] > char*
-
-    // Make `field` and `height`
     Napi::Array arr = info[0].As<Napi::Array>();
-    int height = arr.Length();
+    int width = arr.Length();
+    int height = arr.operator[]((uint32_t) 0).operator Napi::Value().As<Napi::Array>().Length();
+    std::vector<std::vector<int>> field = std::vector<std::vector<int>>();
 
-    int** field = new int*[height];
-    for (int i = 0; i < height; ++i)
-    field[i] = new int[10];
-
-    for (int x = 0; x < 10; ++x)
+    for (int x = 0; x < width; ++x) {
+        field.push_back(std::vector<int>());
         for (int y = 0; y < height; ++y)
-            field[x][y] = arr.operator[]((uint32_t) x).operator Napi::Value().As<Napi::Array>().operator[]((uint32_t) y).operator Napi::Value().As<Napi::Number>();
+            field[x].push_back(arr[x].operator Napi::Value().As<Napi::Array>()[y].operator Napi::Value().As<Napi::Number>());
+    }
 
-    // Turn the field into a string and give to MisaMino
-    std::string* rows = new std::string[height];
+    std::vector<std::string> rows = std::vector<std::string>();
+    for (int i = 0; i < height; ++i) rows.push_back("");
 
     for (int i = 0; i < height; ++i) {
-        int row[10];
+        std::vector<int> row = std::vector<int>();
+        for (int i = 0; i < width; ++i) row.push_back(0);
 
-        for (int j = 0; j < 10; j++)
-        row[9 - j] = (*field[j, i] == 255) ? 0 : 2; // Mirror for whatever reason. Blaming MisaMino.
+        for (int j = 0; j < width; j++)
+            row[width - 1 - j] = (((int) field[j][i]) == 255)? 0 : 2; // Mirror for whatever reason. Blaming MisaMino.
 
         std::string row_str = ""; 
         row_str += std::to_string(row[0]); 
-        for (int i = 1; i < 10; i++)
+        for (int i = 1; i < width; i++)
         row_str += "," + std::to_string(row[i]);
 
         rows[height - i - 1] = row_str;
@@ -199,17 +198,10 @@ napi_value update_fieldW(const Napi::CallbackInfo& info) {
 
     std::string rows_str = ""; 
     rows_str += rows[0]; 
-    for (int i = 1; i < 10; ++i)
+    for (int i = 1; i < height; ++i)
     rows_str += ";" + rows[i];
 
-    //delete &rows;
-    for (int i = 0; i < 10; ++i) {
-        //delete &field[i];
-    };
-    //delete &field;
-
     update_field(rows_str.c_str());
-    //update_field("0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,2,2,0,0;0,0,0,0,2,0,2,2,0,0;0,0,0,2,2,2,2,2,2,2;0,0,2,2,2,2,2,2,2,2;0,2,2,2,2,2,2,2,2,2;2,2,2,2,2,2,2,2,2,0");
     return nullptr;
 }
 

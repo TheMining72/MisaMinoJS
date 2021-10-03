@@ -16,22 +16,11 @@ extern "C" bool alive();
 extern "C" void findpath(const char* _field, const char* _piece, int x, int y, int r, bool hold, char* str, int len);
 
 bool aborting = false;
-std::vector<Napi::Function> finished_hook = std::vector<Napi::Function>();
 bool mm_running = false;
 bool running = false;
 
 int abort_callback() {
     return aborting;
-}
-
-napi_value finished_add(const Napi::CallbackInfo& info) {
-    finished_hook.push_back(info[6].As<Napi::Function>());
-    return nullptr;
-}
-
-napi_value finished_del(const Napi::CallbackInfo& info) {
-    finished_hook.erase(std::find(finished_hook.begin(), finished_hook.end(), info[6].As<Napi::Function>()));
-    return nullptr;
 }
 
 napi_value abort_bot(const Napi::CallbackInfo& info) {

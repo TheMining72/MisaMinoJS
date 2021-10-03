@@ -3,6 +3,21 @@
 #include "calculations.h"
 #include "./MisaMino/MisaMino/main.h"
 
+std::vector<std::string> split(std::string s, std::string delimiter) {
+    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+    std::string token;
+    std::vector<std::string> res;
+
+    while ((pos_end = s.find (delimiter, pos_start)) != std::string::npos) {
+        token = s.substr (pos_start, pos_end - pos_start);
+        pos_start = pos_end + delim_len;
+        res.push_back (token);
+    }
+
+    res.push_back (s.substr (pos_start));
+    return res;
+}
+
 std::string move() {
     if (aborting) return "-1";
     aborting = false;
@@ -33,10 +48,10 @@ struct move_context {
 };
 
 napi_value finished(const Napi::CallbackInfo& info) {
-    std::vector<napi_value> args = std::vector<napi_value>();
-    args.push_back(info[0]);
-    for (Napi::Function f : finished_hook) 
-        f.Call(args);
+    //std::vector<napi_value> args = std::vector<napi_value>();
+    //args.push_back(info[0]);
+    //for (Napi::Function f : finished_hook) 
+    //    f.Call(args);
     return nullptr;
 }
 
@@ -45,7 +60,38 @@ void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context)
     context -> nativeThread.join();
 
     // Resolve the Promise previously returned to JS
-    context -> deferred.Resolve(Napi::String::New(env, context -> solution));
+    const int* from_misamino = new int[7] { 6, 4, 2, 3, 0, 1, 5 };
+    std::vector<std::string> info = split(context -> solution, "|");
+
+    Napi::Array instructions = Napi::Array::New(env);
+    std::vector<std::string> instructionInfo = split(info[0], ",");
+    for (int i = 0; i < instructionInfo.size(); i++)
+        instructions[i] = Napi::Number::New(env, std::stoi(instructionInfo[i]));
+
+    Napi::String pieceUsed = Napi::String::New(env, info[1]);
+    Napi::Number spinUsed = Napi::Number::New(env, std::stoi(info[2]));
+    Napi::Number b2b = Napi::Number::New(env, std::stoi(info[3]));
+    Napi::Number nodes = Napi::Number::New(env, std::stoi(info[4]));
+    Napi::Number depth = Napi::Number::New(env, std::stoi(info[5]));
+    Napi::Number attack = Napi::Number::New(env, std::stoi(info[6]));
+
+    std::vector<std::string> pieceInfo = split(info[7], ",");
+    Napi::Number finalX = Napi::Number::New(env, std::stoi(pieceInfo[0]) + 1);
+    Napi::Number finalY = Napi::Number::New(env, std::stoi(pieceInfo[1]) + 3);
+
+    Napi::Object solution = Napi::Object::New(env);
+    solution["Instructions"] = instructions;
+    solution["PieceUsed"] = pieceUsed;
+    solution["SpinUsed"] = spinUsed;
+    solution["B2B"] = b2b;
+    solution["Nodes"] = nodes;
+    solution["Depth"] = depth;
+    solution["Attack"] = attack;
+    solution["FinalX"] = finalX;
+    solution["FinalY"] = finalY;
+
+    context -> deferred.Resolve(solution);
+    delete from_misamino;
     delete context;
 }
 

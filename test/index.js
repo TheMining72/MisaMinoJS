@@ -17,5 +17,5 @@ for (var x = 0; x < 10; x++) {
 MisaMino.update_field(field);
 
 void async function() {
-  console.log(await MisaMino.action());
+  console.log(JSON.stringify(await MisaMino.action()));
 }();

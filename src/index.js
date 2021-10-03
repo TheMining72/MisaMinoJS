@@ -1,11 +1,34 @@
 const MisaMino = require("bindings")("MisaMinoJS");
 
-MisaMino.finished_add(function (...args) {
-  console.log(...args);
-});
+action = async () => {
+  return new Promise((resolve, reject) => {
+    MisaMino.action().then(solution => {
+      solution.FinalR = (
+        solution.Instructions.filter(s => s == 8).length
+        - solution.Instructions.filter(s => s == 7).length
+        + solution.Instructions.filter(s => s == 11).length * 2
+        + 100
+      ) % 4;
+      resolve(solution);
+    });
+  });
+}
 
 module.exports = {
-  MisaMino: MisaMino,
+  MisaMino: {
+    abort: MisaMino.abort,
+    configure: MisaMino.configure,
+    update_next: MisaMino.update_next,
+    update_current: MisaMino.update_current,
+    update_hold: MisaMino.update_hold,
+    update_incoming: MisaMino.update_incoming,
+    update_combo: MisaMino.update_combo,
+    update_b2b: MisaMino.update_b2b,
+    update_field: MisaMino.update_field,
+    update_reset: MisaMino.update_reset,
+    action: action,
+    alive: MisaMino.alive
+  },
   Pieces: {
     NULL: -1,
     Z: 0,

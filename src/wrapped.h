@@ -6,14 +6,11 @@
 #include <vector>
 
 extern bool aborting;
-extern std::vector<Napi::Function> finished_hook;
 extern bool mm_running;
 extern bool running;
 
 int abort_callback();
 
-napi_value finished_add(const Napi::CallbackInfo& info);
-napi_value finished_del(const Napi::CallbackInfo& info);
 napi_value abort_bot(const Napi::CallbackInfo& info);
 napi_value configureW(const Napi::CallbackInfo& info);
 napi_value update_nextW(const Napi::CallbackInfo& info);

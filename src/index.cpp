@@ -13,8 +13,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
         first_setup = false;
     }
 
-    exports.Set("finished_add", Napi::Function::New(env, finished_add));
-    exports.Set("finished_del", Napi::Function::New(env, finished_del));
     exports.Set("abort", Napi::Function::New(env, abort_bot));
     exports.Set("configure", Napi::Function::New(env, configureW));
     exports.Set("update_next", Napi::Function::New(env, update_nextW));

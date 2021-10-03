@@ -6,14 +6,10 @@ bool first_setup = true;
 extern "C" void setup();
 extern "C" void set_abort(Callback handler);
 
-int cb () {
-    return false;
-}
-
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     if (first_setup) {
         setup();
-        set_abort(cb);
+        set_abort(abort_callback);
         first_setup = false;
     }
 

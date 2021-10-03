@@ -3,17 +3,12 @@
 #include "calculations.h"
 #include "./MisaMino/MisaMino/main.h"
 
-extern "C" void action(char* str, int len);
-
-char* move() {
-    char* solution = "";
-
+std::string move() {
     if (aborting) return "-1";
     aborting = false;
     mm_running = true;
-    action(solution, 0);
+    std::string solution = action();
     mm_running = false;
-
     return solution;
 }
 
@@ -34,7 +29,7 @@ struct move_context {
 
     Napi::ThreadSafeFunction tsfn;
 
-    char* solution;
+    std::string solution;
 };
 
 napi_value finished(const Napi::CallbackInfo& info) {
@@ -42,6 +37,7 @@ napi_value finished(const Napi::CallbackInfo& info) {
     args.push_back(info[0]);
     for (Napi::Function f : finished_hook) 
         f.Call(args);
+    return nullptr;
 }
 
 void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context) {

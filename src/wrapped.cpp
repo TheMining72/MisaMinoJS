@@ -96,41 +96,33 @@ napi_value configureW(const Napi::CallbackInfo& info) {
     return nullptr;
 };
 
-// Number[]
+// String[]
 napi_value update_nextW(const Napi::CallbackInfo& info) {
 
     // 0 Number[] > char*
     Napi::Array arr0 = info[0].As<Napi::Array>();
     std::string arg0 = "";
-    arg0 += std::to_string((int) arr0.operator[]((uint32_t) 0).operator Napi::Value().As<Napi::Number>());
+    arg0 += arr0.operator[]((uint32_t) 0).operator Napi::Value().As<Napi::String>();
     for (int i = 1; i < arr0.Length(); i++)
-    arg0 += "," + std::to_string((int) arr0.operator[]((uint32_t) i).operator Napi::Value().As<Napi::Number>());
+    arg0 += "," + (std::string) arr0.operator[]((uint32_t) i).operator Napi::Value().As<Napi::String>();
 
     update_next(arg0.c_str());
     return nullptr;
 }
 
-// Number
+// String
 napi_value update_currentW(const Napi::CallbackInfo& info) {
 
-    // 0 Number > char*
-    int num0 = info[0].As<Napi::Number>();
-    std::string s = std::to_string(num0);
-    char const *arg0 = s.c_str();
-
-    update_current(arg0);
+    // 0 String > char*, just directly put it in because
+    update_current(((std::string) info[0].As<Napi::String>()).c_str());
     return nullptr;
 }
 
 // Number
 napi_value update_holdW(const Napi::CallbackInfo& info) {
 
-    // 0 Number > char*
-    int num0 = info[0].As<Napi::Number>();
-    std::string s = std::to_string(num0);
-    char const *arg0 = s.c_str();
-
-    update_hold(arg0);
+    // 0 Number > char*, just directly put it in because
+    update_hold(((std::string) info[0].As<Napi::String>()).c_str());
     return nullptr;
 }
 

@@ -14,7 +14,7 @@ std::vector<std::vector<int>> to_field(Napi::Array arr) {
 
     return field;
 }
-#include "./MisaMino/MisaMino/main.h"
+
 std::tuple<std::vector<std::vector<int>>, int> clear_lines(std::vector<std::vector<int>> board)
 {
     int cleared = 0;
@@ -32,7 +32,9 @@ std::tuple<std::vector<std::vector<int>>, int> clear_lines(std::vector<std::vect
             {
                 for (int k = 0; k < board.size(); ++k)
                 {
-                    board[k][j] = board[k][j + 1];
+                    if (j + 1 < board[0].size())
+                        board[k][j] = board[k][j + 1];
+                    else board[k][j] = -1;
                 }
             }
         }

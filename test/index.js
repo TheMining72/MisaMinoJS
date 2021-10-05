@@ -29,7 +29,7 @@ class piecesGen {
     return (this.next() - 1) / 2147483646;
   }
 
-  nextBag(minos = ["T", "L", "O", "T", "I", "J", "T"]) {
+  nextBag(minos = ["Z", "L", "O", "S", "I", "J", "T"]) {
     this.curBag++;
     let randomPiece, minosLeft = minos.length;
 
@@ -43,7 +43,7 @@ class piecesGen {
   }
 }
 
-var queueGen = new piecesGen(2);
+var queueGen = new piecesGen(1);
 var queue = []; queueGen.nextBag().forEach(p => queue.push(p)); queueGen.nextBag().forEach(p => queue.push(p));
 var hold = "T";
 var current = "I";
@@ -117,7 +117,7 @@ async function play() {
 
   let s = MisaMino.action();
   // 0 = Search everything without taking the pps in
-  let pps = 0;
+  let pps = 4;
   let actionTimeout;
   if (pps > 0) actionTimeout = setTimeout(MisaMino.abort, Math.floor(1000 / pps))
   s.then(solution => {
@@ -137,7 +137,6 @@ async function play() {
     b2b = solution.B2B;
 
     printField();
-    //setTimeout(play, 1000);
     play();
   });
 };

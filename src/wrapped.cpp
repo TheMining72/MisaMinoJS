@@ -262,9 +262,7 @@ Napi::Object apply_piece(const Napi::CallbackInfo& info) {
 
     Napi::Array new_field;
     if (success) {
-        auto cltuple = clear_lines(board);
-        board = std::get<0>(cltuple);
-        cleared_lines = std::get<1>(cltuple) > 0;
+        cleared_lines = clear_lines(&board) > 0;
         new_field = Napi::Array::New(info.Env());
         for (int x = 0; x < board.size(); ++x) {
             new_field[x] = Napi::Array::New(info.Env());

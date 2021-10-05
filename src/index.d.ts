@@ -1,4 +1,7 @@
 export interface MisaMino {
+  /** Aborts the current action, making it send the best move found while calculating before aborted. */
+  abort(): null;
+
   /**
    * Sets the MisaMino configuration.
    * @param {Partial<MisaMinoParameters>} [param] - The raw MisaMino parameters.
@@ -26,7 +29,7 @@ export interface MisaMino {
   update_current(piece: Pieces): null;
 
   /** Sets the held piece, will be used by the `action` that is called. Set as `-1` when none. */
-  update_hold(piece: Pieces): null;
+  update_hold(piece: Pieces | null): null;
 
   /** Sets the amount of garbage in the garbage meter, will be used by the `action` that is called. */
   update_incoming(attack: number): null;
@@ -37,8 +40,14 @@ export interface MisaMino {
   /** Sets the current b2b, will be used by the `action` that is called. */
   update_b2b(b2b: number): null;
 
+  /** Updates the current field to be used by action. (The field parameter uses the format `field[x][y]`)  */
+  update_field(field: Pieces[][]): null;
+
+  /** Resets the bot. You need to run configure again after running this. */
+  update_reset(): null;
+
   /** Caluclates an action. */
-  action(): Move;
+  action(): Promise<Move>;
 
   /** Is the bot currently alive and hasn't topped out. */
   alive(): boolean;
@@ -46,8 +55,16 @@ export interface MisaMino {
   /** Is the bot is currently running. */
   is_running(): boolean;
 
-  /** Updates the current field to be used by action. (The field parameter uses the format `field[x][y]`)  */
-  update_field(field: Pieces[][]): null;
+  /** Applies a piece on to a field based on a move.  */
+  apply_piece(field: Pieces[][], solution: Move): null;
+  /** Applies a piece on to a field based on a piece and it's coordinates.  */
+  apply_piece(
+    field: Pieces[][],
+    piece: Pieces,
+    x: number,
+    y: number,
+    z: number
+  ): null;
 }
 
 export interface MisaMinoParameters {
@@ -74,17 +91,7 @@ export interface MisaMinoParameters {
   strategy_4w: number;
 }
 
-export declare enum Pieces {
-  /** No piece (Used on hold) */
-  NULL = -1,
-  Z = 0,
-  S = 1,
-  L = 2,
-  J = 3,
-  T = 4,
-  O = 5,
-  I = 6,
-}
+export declare type Pieces = "Z" | "S" | "L" | "J" | "T" | "O" | "I";
 
 export interface Move {
   /**

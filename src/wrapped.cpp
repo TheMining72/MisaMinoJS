@@ -94,6 +94,7 @@ napi_value update_nextW(const Napi::CallbackInfo& info) {
     arg0 += arr0.operator[]((uint32_t) 0).operator Napi::Value().As<Napi::String>();
     for (int i = 1; i < arr0.Length(); ++i)
     arg0 += "," + (std::string) arr0.operator[]((uint32_t) i).operator Napi::Value().As<Napi::String>();
+    for (int i = 0; i < arg0.size(); ++i) arg0[i] = toupper(arg0[i]);
 
     update_next(arg0.c_str());
     return nullptr;
@@ -101,8 +102,10 @@ napi_value update_nextW(const Napi::CallbackInfo& info) {
 
 // String
 napi_value update_currentW(const Napi::CallbackInfo& info) {
-    // 0 String > char*, just directly put it in because
-    update_current(((std::string) info[0].As<Napi::String>()).c_str());
+    // 0 String > char*
+    std::string arg0 = info[0].As<Napi::String>();
+    for (int i = 0; i < arg0.size(); ++i) arg0[i] = toupper(arg0[i]);
+    update_current(arg0.c_str());
     return nullptr;
 }
 
@@ -110,8 +113,11 @@ napi_value update_currentW(const Napi::CallbackInfo& info) {
 napi_value update_holdW(const Napi::CallbackInfo& info) {
     // 0 Number > char*, just directly put it in because
     if (info.Length() > 0) {
-        if (!info[0].IsNull())
-            update_hold(((std::string) info[0].As<Napi::String>()).c_str());
+        if (!info[0].IsNull()) {
+            std::string arg0 = info[0].As<Napi::String>();
+            for (int i = 0; i < arg0.size(); ++i) arg0[i] = toupper(arg0[i]);
+            update_hold(arg0.c_str());
+        }
         else update_hold(" ");
     }
     else update_hold(" ");

@@ -8,7 +8,7 @@
     "build": "cmake-js build",
     "rebuild": "cmake-js rebuild",
     "clean": "cmake-js clean",
-    "test": "node test/linktest.js"
+    "test": "node test/index.js"
   },
   "author": "TheMining72 & SuperFire",
   "license": "MIT",

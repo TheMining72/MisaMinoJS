@@ -15,32 +15,32 @@ std::vector<std::vector<int>> to_field(Napi::Array arr) {
     return field;
 }
 
-std::tuple<std::vector<std::vector<int>>, int> clear_lines(std::vector<std::vector<int>> board)
+int clear_lines(std::vector<std::vector<int>>* board)
 {
     int cleared = 0;
 
-    for (int i = board[0].size() - 1; i >= 0; --i)
+    for (int i = (*board)[0].size() - 1; i >= 0; --i)
     {
         int fill = 0;
-        for (int j = 0; j < board.size(); ++j)
-            fill += board[j][i] != -1;
+        for (int j = 0; j < (*board).size(); ++j)
+            fill += (*board)[j][i] != -1;
 
-        if (fill >= board.size())
+        if (fill >= (*board).size())
         {
             ++cleared;
-            for (int j = i; j < board[0].size(); ++j)
+            for (int j = i; j < (*board)[0].size(); ++j)
             {
-                for (int k = 0; k < board.size(); ++k)
+                for (int k = 0; k < (*board).size(); ++k)
                 {
-                    if (j + 1 < board[0].size())
-                        board[k][j] = board[k][j + 1];
-                    else board[k][j] = -1;
+                    if (j + 1 < (*board)[0].size())
+                        (*board)[k][j] = (*board)[k][j + 1];
+                    else (*board)[k][j] = -1;
                 }
             }
         }
     }
 
-    return std::make_tuple(board, cleared);
+    return cleared;
 }
 
 std::vector<std::string> split(std::string s, std::string delimiter) {

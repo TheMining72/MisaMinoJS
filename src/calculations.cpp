@@ -59,7 +59,7 @@ void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context)
         instructions[i] = Napi::Number::New(env, std::stoi(instructionInfo[i]));
 
     Napi::String pieceUsed = Napi::String::New(env, info[1]);
-    Napi::Number spinUsed = Napi::Number::New(env, std::stoi(info[2]));
+    Napi::Boolean spinUsed = Napi::Boolean::New(env, std::stoi(info[2]));
     Napi::Number b2b = Napi::Number::New(env, std::stoi(info[3]));
     Napi::Number nodes = Napi::Number::New(env, std::stoi(info[4]));
     Napi::Number depth = Napi::Number::New(env, std::stoi(info[5]));

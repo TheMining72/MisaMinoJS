@@ -46,7 +46,7 @@ export interface MisaMino {
   /** Resets the bot. You need to run configure again after running this. */
   update_reset(): null;
 
-  /** Caluclates an action. */
+  /** Calculates an action. */
   action(): Promise<Move>;
 
   /** Is the bot currently alive and hasn't topped out. */
@@ -56,7 +56,7 @@ export interface MisaMino {
   is_running(): boolean;
 
   /** Applies a piece on to a field based on a move.  */
-  apply_piece(field: Pieces[][], solution: Move): null;
+  apply_piece(field: Pieces[][], solution: Move): Pieces[][];
   /** Applies a piece on to a field based on a piece and it's coordinates.  */
   apply_piece(
     field: Pieces[][],
@@ -64,7 +64,7 @@ export interface MisaMino {
     x: number,
     y: number,
     z: number
-  ): null;
+  ): Pieces[][];
 }
 
 export interface MisaMinoParameters {

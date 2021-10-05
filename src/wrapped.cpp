@@ -1,6 +1,7 @@
 #include <napi.h>
 #include "wrapped.h"
 #include "calculations.h"
+#include "utils.h"
 #include "./MisaMino/MisaMino/main.h"
 
 extern "C" void configure(AI::AI_Param param, bool holdAllowed, bool allSpin, bool TSDonly, int search_width, bool allow180, bool srsplus);
@@ -31,7 +32,7 @@ napi_value abort_bot(const Napi::CallbackInfo& info) {
 // Object, Boolean, Boolean, Boolean, Number, Boolean, Boolean
 napi_value configureW(const Napi::CallbackInfo& info) {
     // 0 Object > AI_Param
-    Napi::Object obj0 = info.Length() > -1 ? info[0].As<Napi::Object>() : Napi::Object::New(info.Env());
+    Napi::Object obj0 = info.Length() > 0 ? info[0].As<Napi::Object>() : Napi::Object::New(info.Env());
     AI::AI_Param arg0 = AI::AI_Param();
     arg0.miny_factor = obj0.Has("miny_factor") ? obj0.Get("miny_factor").As<Napi::Number>() : 16;
     arg0.hole = obj0.Has("hole") ? obj0.Get("hole").As<Napi::Number>() : 9;
@@ -56,22 +57,22 @@ napi_value configureW(const Napi::CallbackInfo& info) {
     arg0.tmini = obj0.Has("strategy_4w") ? obj0.Get("strategy_4w").As<Napi::Number>() : 0;
 
     // 1
-    bool arg1 = info.Length() > 0 ? info[1].As<Napi::Boolean>() : true;
+    bool arg1 = info.Length() > 1 ? info[1].As<Napi::Boolean>() : true;
 
     // 2
-    bool arg2 = info.Length() > 1 ? info[2].As<Napi::Boolean>() : false;
+    bool arg2 = info.Length() > 2 ? info[2].As<Napi::Boolean>() : false;
 
     // 3
-    bool arg3 = info.Length() > 2 ? info[3].As<Napi::Boolean>() : false;
+    bool arg3 = info.Length() > 3 ? info[3].As<Napi::Boolean>() : false;
 
     // 4
-    int arg4 = info.Length() > 3 ? info[4].As<Napi::Number>() : 1000;
+    int arg4 = info.Length() > 4 ? info[4].As<Napi::Number>() : 1000;
 
     // 5
-    bool arg5 = info.Length() > 4 ? info[5].As<Napi::Boolean>() : true;
+    bool arg5 = info.Length() > 5 ? info[5].As<Napi::Boolean>() : true;
 
     // 6
-    bool arg6 = info.Length() > 5 ? info[6].As<Napi::Boolean>() : true;
+    bool arg6 = info.Length() > 6 ? info[6].As<Napi::Boolean>() : true;
 
     configure(
     arg0,
@@ -87,12 +88,11 @@ napi_value configureW(const Napi::CallbackInfo& info) {
 
 // String[]
 napi_value update_nextW(const Napi::CallbackInfo& info) {
-
     // 0 Number[] > char*
     Napi::Array arr0 = info[0].As<Napi::Array>();
     std::string arg0 = "";
     arg0 += arr0.operator[]((uint32_t) 0).operator Napi::Value().As<Napi::String>();
-    for (int i = 1; i < arr0.Length(); i++)
+    for (int i = 1; i < arr0.Length(); ++i)
     arg0 += "," + (std::string) arr0.operator[]((uint32_t) i).operator Napi::Value().As<Napi::String>();
 
     update_next(arg0.c_str());
@@ -101,7 +101,6 @@ napi_value update_nextW(const Napi::CallbackInfo& info) {
 
 // String
 napi_value update_currentW(const Napi::CallbackInfo& info) {
-
     // 0 String > char*, just directly put it in because
     update_current(((std::string) info[0].As<Napi::String>()).c_str());
     return nullptr;
@@ -109,7 +108,6 @@ napi_value update_currentW(const Napi::CallbackInfo& info) {
 
 // Number
 napi_value update_holdW(const Napi::CallbackInfo& info) {
-
     // 0 Number > char*, just directly put it in because
     update_hold(((std::string) info[0].As<Napi::String>()).c_str());
     return nullptr;
@@ -117,7 +115,6 @@ napi_value update_holdW(const Napi::CallbackInfo& info) {
 
 // Number
 napi_value update_incomingW(const Napi::CallbackInfo& info) {
-
     // 0
     int arg0 = info[0].As<Napi::Number>();
 
@@ -127,7 +124,6 @@ napi_value update_incomingW(const Napi::CallbackInfo& info) {
 
 // Number
 napi_value update_comboW(const Napi::CallbackInfo& info) {
-
     // 0
     int arg0 = info[0].As<Napi::Number>();
 
@@ -137,7 +133,6 @@ napi_value update_comboW(const Napi::CallbackInfo& info) {
 
 // Number
 napi_value update_b2bW(const Napi::CallbackInfo& info) {
-
     // 0
     int arg0 = info[0].As<Napi::Number>();
 
@@ -148,16 +143,9 @@ napi_value update_b2bW(const Napi::CallbackInfo& info) {
 // Number[][]
 napi_value update_fieldW(const Napi::CallbackInfo& info) {
     // Number[][] > char*
-    Napi::Array arr = info[0].As<Napi::Array>();
-    int width = arr.Length();
-    int height = arr.operator[]((uint32_t) 0).operator Napi::Value().As<Napi::Array>().Length();
-    std::vector<std::vector<int>> field = std::vector<std::vector<int>>();
-
-    for (int x = 0; x < width; ++x) {
-        field.push_back(std::vector<int>());
-        for (int y = 0; y < height; ++y)
-            field[x].push_back(arr[x].operator Napi::Value().As<Napi::Array>()[y].operator Napi::Value().As<Napi::Number>());
-    }
+    std::vector<std::vector<int>> field = to_field(info[0].As<Napi::Array>());
+    int width = field.size();
+    int height = field[0].size();
 
     std::vector<std::string> rows = std::vector<std::string>();
     for (int i = 0; i < height; ++i) rows.push_back("");
@@ -166,12 +154,12 @@ napi_value update_fieldW(const Napi::CallbackInfo& info) {
         std::vector<int> row = std::vector<int>();
         for (int i = 0; i < width; ++i) row.push_back(0);
 
-        for (int j = 0; j < width; j++)
-            row[width - 1 - j] = (((int) field[j][i]) == 255)? 0 : 2; // Mirror for whatever reason. Blaming MisaMino.
+        for (int j = 0; j < width; ++j)
+            row[width - 1 - j] = (((int) field[j][i]) == -1)? 0 : 2; // Mirror for whatever reason. Blaming MisaMino.
 
         std::string row_str = ""; 
         row_str += std::to_string(row[0]); 
-        for (int i = 1; i < width; i++)
+        for (int i = 1; i < width; ++i)
         row_str += "," + std::to_string(row[i]);
 
         rows[height - i - 1] = row_str;
@@ -210,48 +198,83 @@ Napi::Boolean aliveW(const Napi::CallbackInfo& info) {
 }
 
 // Uint8Array, Uint8Array, Number, Number, Number, Boolean, Uint8Array, Number
-/*napi_value findpathW(const Napi::CallbackInfo& info) {
-Napi::Env env = info.Env();
+napi_value findpathW(const Napi::CallbackInfo& info) {
+    return nullptr;
+}
 
-// 0 Uint8array > char*
-Napi::Uint8Array arr0 = info[0].As<Napi::Uint8Array>();
-size_t length0 = arr0.ElementLength();
-char* arg0 = reinterpret_cast<char*>(arr0.ArrayBuffer().Data());
+// Object
+// Number, Number, Number
+Napi::Object apply_piece(const Napi::CallbackInfo& info) {
+    bool success = true;
+    
+    std::vector<std::vector<int>> board;
+    int piece;
+    int x;
+    int y;
+    int r;
 
-// 1 Uint8array > char*
-Napi::Uint8Array arr1 = info[1].As<Napi::Uint8Array>();
-size_t length1 = arr1.ElementLength();
-char* arg1 = reinterpret_cast<char*>(arr1.ArrayBuffer().Data());
+    board = to_field(info[0].As<Napi::Array>());
 
-// 2
-int arg2 = info[2].As<Napi::Number>();
+    if (info[0].IsObject()) {
+        Napi::Object solution = info[1].ToObject();
 
-// 3
-int arg3 = info[3].As<Napi::Number>();
+        const std::string* piece_str = std::find(std::begin(to_char), std::end(to_char), ((std::string) solution["PieceUsed"].operator Napi::Value().ToString()));
+        if (piece_str != std::end(to_char)) piece = std::distance(to_char, piece_str);
+        else {
+            napi_throw_error(info.Env(), nullptr, "Given piece string was not 'S', 'Z', 'J', 'L', 'T', 'O' or 'I'");
+            return Napi::Array::New(info.Env());
+        }
 
-// 4
-int arg4 = info[4].As<Napi::Number>();
+        x = solution["FinalX"].operator Napi::Value().ToNumber();
+        y = solution["FinalY"].operator Napi::Value().ToNumber();
+        r = solution["FinalR"].operator Napi::Value().ToNumber();
+    }
+    else {
+        const std::string* piece_str = std::find(std::begin(to_char), std::end(to_char), ((std::string) info[1].ToString()));
+        if (piece_str != std::end(to_char)) piece = std::distance(to_char, piece_str);
+        else {
+            napi_throw_error(info.Env(), nullptr, "Given piece string was not 'S', 'Z', 'J', 'L', 'T', 'O' or 'I'");
+            return Napi::Array::New(info.Env());
+        }
 
-// 5
-int arg5 = info[5].As<Napi::Number>();
+        x = info[2].ToNumber();
+        y = info[3].ToNumber();
+        r = info[4].ToNumber();
+    }
 
-// 6 Uint8array > char*
-Napi::Uint8Array arr6 = info[6].As<Napi::Uint8Array>();
-size_t length6 = arr6.ElementLength();
-char* arg6 = reinterpret_cast<char*>(arr6.ArrayBuffer().Data());
+    int base_board_height = board[0].size();
 
-// 5
-int arg7 = info[7].As<Napi::Number>();
+    bool cleared_lines = false;
+    --x;
+    y = base_board_height + 3 - y;
 
-findpath(
-arg0,
-arg1,
-arg2,
-arg3,
-arg4,
-arg5,
-arg6,
-arg7
-);
-return nullptr;
-}*/
+    for (int i = 0; i < 4 && success; ++i)
+        for (int j = 0; j < 4 && success; ++j)
+            if (piece_defs[piece][r][i][j] != -1)
+            {
+                //if (x + j < 0 || y - i < 0 || x + j > board.size() || y - i > board[0].size() || board[x + j][y - i] != -1) success = false;
+                board[x + j][y - i] = piece_defs[piece][r][i][j];
+            }
+
+    Napi::Array new_field;
+    if (success) {
+        auto cltuple = clear_lines(board);
+        board = std::get<0>(cltuple);
+        cleared_lines = std::get<1>(cltuple) > 0;
+        new_field = Napi::Array::New(info.Env());
+        for (int x = 0; x < board.size(); ++x) {
+            new_field[x] = Napi::Array::New(info.Env());
+            for (int y = 0; y < board[x].size(); ++y)
+                new_field.operator[]((uint32_t) x).operator Napi::Value().As<Napi::Array>().operator[]((uint32_t) y).operator=(Napi::Number::New(info.Env(), board[x][y]));
+        }
+    }
+
+    Napi::Object field_info = Napi::Object::New(info.Env());
+    field_info["Success"] = Napi::Boolean::New(info.Env(), success);
+    if (success) {
+        field_info["Field"] = new_field;
+        field_info["Combo"] = Napi::Boolean::New(info.Env(), cleared_lines);
+    }
+
+    return field_info;
+}

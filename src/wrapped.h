@@ -1,9 +1,10 @@
 #ifndef WRAPPED_H
 #define WRAPPED_H
 #include <napi.h>
-#include "./MisaMino/MisaMino/main.h"
+#include "wrapped.h"
 #include "calculations.h"
-#include <vector>
+#include "utils.h"
+#include "./MisaMino/MisaMino/main.h"
 
 extern bool aborting;
 extern bool mm_running;
@@ -24,5 +25,7 @@ napi_value update_resetW(const Napi::CallbackInfo& info);
 Napi::Value actionW(const Napi::CallbackInfo& info);
 Napi::Boolean aliveW(const Napi::CallbackInfo& info);
 //napi_value findpathW(const Napi::CallbackInfo& info);
+
+Napi::Object apply_piece(const Napi::CallbackInfo& info);
 
 #endif

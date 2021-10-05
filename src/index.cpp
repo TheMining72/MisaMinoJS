@@ -26,6 +26,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set("action", Napi::Function::New(env, actionW));
     exports.Set("alive", Napi::Function::New(env, aliveW));
     //exports.Set("findpath", Napi::Function::New(env, findpathW));
+
+    exports.Set("apply_piece", Napi::Function::New(env, apply_piece));
     return exports;
 }
 

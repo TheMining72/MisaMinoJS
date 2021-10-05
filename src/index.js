@@ -1,6 +1,6 @@
 const MisaMino = require("bindings")("MisaMinoJS");
 
-action = async () => {
+function action() {
   return new Promise((resolve, reject) => {
     MisaMino.action().then(solution => {
       solution.FinalR = (
@@ -27,7 +27,8 @@ module.exports = {
     update_field: MisaMino.update_field,
     update_reset: MisaMino.update_reset,
     action: action,
-    alive: MisaMino.alive
+    alive: MisaMino.alive,
+    apply_piece: MisaMino.apply_piece
   },
   Pieces: {
     NULL: -1,

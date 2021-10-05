@@ -3,21 +3,6 @@
 #include "calculations.h"
 #include "./MisaMino/MisaMino/main.h"
 
-std::vector<std::string> split(std::string s, std::string delimiter) {
-    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-    std::string token;
-    std::vector<std::string> res;
-
-    while ((pos_end = s.find (delimiter, pos_start)) != std::string::npos) {
-        token = s.substr (pos_start, pos_end - pos_start);
-        pos_start = pos_end + delim_len;
-        res.push_back (token);
-    }
-
-    res.push_back (s.substr (pos_start));
-    return res;
-}
-
 std::string move() {
     if (aborting) return "-1";
     aborting = false;
@@ -65,7 +50,7 @@ void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context)
 
     Napi::Array instructions = Napi::Array::New(env);
     std::vector<std::string> instructionInfo = split(info[0], ",");
-    for (int i = 0; i < instructionInfo.size(); i++)
+    for (int i = 0; i < instructionInfo.size(); ++i)
         instructions[i] = Napi::Number::New(env, std::stoi(instructionInfo[i]));
 
     Napi::String pieceUsed = Napi::String::New(env, info[1]);
@@ -95,7 +80,7 @@ void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context)
     delete context;
 }
 
-Napi::Value start(const Napi::CallbackInfo& info) {
+Napi::Promise start(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     auto move_data = new move_context(env);
 

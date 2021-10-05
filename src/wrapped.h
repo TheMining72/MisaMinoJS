@@ -1,10 +1,7 @@
 #ifndef WRAPPED_H
 #define WRAPPED_H
 #include <napi.h>
-#include "wrapped.h"
-#include "calculations.h"
 #include "utils.h"
-#include "./MisaMino/MisaMino/main.h"
 
 extern bool aborting;
 extern bool mm_running;
@@ -12,7 +9,6 @@ extern bool running;
 
 int abort_callback();
 
-napi_value abort_bot(const Napi::CallbackInfo& info);
 napi_value configureW(const Napi::CallbackInfo& info);
 napi_value update_nextW(const Napi::CallbackInfo& info);
 napi_value update_currentW(const Napi::CallbackInfo& info);
@@ -26,6 +22,8 @@ Napi::Value actionW(const Napi::CallbackInfo& info);
 Napi::Boolean aliveW(const Napi::CallbackInfo& info);
 //napi_value findpathW(const Napi::CallbackInfo& info);
 
+napi_value abort_bot(const Napi::CallbackInfo& info);
+Napi::Boolean is_running(const Napi::CallbackInfo& info);
 Napi::Object apply_piece(const Napi::CallbackInfo& info);
 
 #endif

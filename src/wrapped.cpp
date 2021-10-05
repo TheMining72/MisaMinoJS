@@ -109,7 +109,12 @@ napi_value update_currentW(const Napi::CallbackInfo& info) {
 // Number
 napi_value update_holdW(const Napi::CallbackInfo& info) {
     // 0 Number > char*, just directly put it in because
-    update_hold(((std::string) info[0].As<Napi::String>()).c_str());
+    if (info.Length() > 0) {
+        if (!info[0].IsNull())
+            update_hold(((std::string) info[0].As<Napi::String>()).c_str());
+        else update_hold(" ");
+    }
+    else update_hold(" ");
     return nullptr;
 }
 
@@ -197,7 +202,6 @@ Napi::Boolean aliveW(const Napi::CallbackInfo& info) {
     return returnValue;
 }
 
-// Uint8Array, Uint8Array, Number, Number, Number, Boolean, Uint8Array, Number
 napi_value findpathW(const Napi::CallbackInfo& info) {
     return nullptr;
 }

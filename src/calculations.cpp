@@ -45,6 +45,11 @@ void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context)
     context -> nativeThread.join();
 
     // Resolve the Promise previously returned to JS
+    if (context -> solution == "-1") {
+        context -> deferred.Resolve(Napi::Number::New(env, -1));
+        return;
+    }
+
     const int* from_misamino = new int[7] { 6, 4, 2, 3, 0, 1, 5 };
     std::vector<std::string> info = split(context -> solution, "|");
 

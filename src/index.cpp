@@ -13,7 +13,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
         first_setup = false;
     }
 
-    exports.Set("abort", Napi::Function::New(env, abort_bot));
     exports.Set("configure", Napi::Function::New(env, configureW));
     exports.Set("update_next", Napi::Function::New(env, update_nextW));
     exports.Set("update_current", Napi::Function::New(env, update_currentW));
@@ -27,6 +26,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set("alive", Napi::Function::New(env, aliveW));
     //exports.Set("findpath", Napi::Function::New(env, findpathW));
 
+    exports.Set("abort", Napi::Function::New(env, abort_bot));
+    exports.Set("is_running", Napi::Function::New(env, is_running));
     exports.Set("apply_piece", Napi::Function::New(env, apply_piece));
     return exports;
 }

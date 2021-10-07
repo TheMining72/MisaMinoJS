@@ -154,7 +154,7 @@ napi_value update_b2bW(const Napi::CallbackInfo& info) {
 // Number[][]
 napi_value update_fieldW(const Napi::CallbackInfo& info) {
     // Number[][] > char*
-    std::vector<std::vector<int>> field = to_field(info[0].As<Napi::Array>());
+    std::vector<std::vector<std::string>> field = to_field(info[0].As<Napi::Array>());
     int width = field.size();
     int height = field[0].size();
 
@@ -166,7 +166,7 @@ napi_value update_fieldW(const Napi::CallbackInfo& info) {
         for (int i = 0; i < width; ++i) row.push_back(0);
 
         for (int j = 0; j < width; ++j)
-            row[width - 1 - j] = (((int) field[j][i]) == -1)? 0 : 2; // Mirror for whatever reason. Blaming MisaMino.
+            row[width - 1 - j] = (field[j][i] == " ") ? 0 : 2; // Mirror for whatever reason. Blaming MisaMino.
 
         std::string row_str = ""; 
         row_str += std::to_string(row[0]); 
@@ -212,12 +212,12 @@ napi_value findpathW(const Napi::CallbackInfo& info) {
     return nullptr;
 }
 
-// Object
-// Number, Number, Number
+// Array, Object
+// Array, String, Number, Number, Number
 Napi::Object apply_piece(const Napi::CallbackInfo& info) {
     bool success = true;
     
-    std::vector<std::vector<int>> board;
+    std::vector<std::vector<std::string>> board;
     int piece;
     int x;
     int y;
@@ -258,31 +258,55 @@ Napi::Object apply_piece(const Napi::CallbackInfo& info) {
     --x;
     y = base_board_height + 3 - y;
 
-    for (int i = 0; i < 4 && success; ++i)
-        for (int j = 0; j < 4 && success; ++j)
-            if (piece_defs[piece][r][i][j] != -1)
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            if (piece_defs[piece][r][i][j] != " ")
             {
-                //if (x + j < 0 || y - i < 0 || x + j > board.size() || y - i > board[0].size() || board[x + j][y - i] != -1) success = false;
+                if (x + j < 0 || y - i < 0 || x + j > board.size() || y - i > board[0].size() || board[x + j][y - i] != " ") success = false;
                 board[x + j][y - i] = piece_defs[piece][r][i][j];
             }
 
     Napi::Array new_field;
-    if (success) {
-        cleared_lines = clear_lines(&board) > 0;
-        new_field = Napi::Array::New(info.Env());
-        for (int x = 0; x < board.size(); ++x) {
-            new_field[x] = Napi::Array::New(info.Env());
-            for (int y = 0; y < board[x].size(); ++y)
-                new_field.operator[]((uint32_t) x).operator Napi::Value().As<Napi::Array>().operator[]((uint32_t) y).operator=(Napi::Number::New(info.Env(), board[x][y]));
-        }
+    cleared_lines = clear_lines(&board) > 0;
+    new_field = Napi::Array::New(info.Env());
+    for (int x = 0; x < board.size(); ++x) {
+        new_field[x] = Napi::Array::New(info.Env());
+        for (int y = 0; y < board[x].size(); ++y)
+            new_field.operator[]((uint32_t) x).operator Napi::Value().As<Napi::Array>().operator[]((uint32_t) y).operator=(Napi::String::New(info.Env(), board[x][y]));
     }
 
     Napi::Object field_info = Napi::Object::New(info.Env());
     field_info["Success"] = Napi::Boolean::New(info.Env(), success);
-    if (success) {
-        field_info["Field"] = new_field;
-        field_info["Combo"] = Napi::Boolean::New(info.Env(), cleared_lines);
-    }
+    field_info["Field"] = new_field;
+    field_info["Combo"] = Napi::Boolean::New(info.Env(), cleared_lines);
 
     return field_info;
+}
+
+// Array, Array
+Napi::Array add_garbage(const Napi::CallbackInfo& info) {
+    std::vector<std::vector<std::string>> board = to_field(info[0].As<Napi::Array>());;
+
+    std::vector<int> holes = std::vector<int>();
+    auto holes_jsarr = info[1].As<Napi::Array>();
+    for (int i = 0; i < holes_jsarr.Length(); ++i)
+        holes.push_back(holes_jsarr[i].operator Napi::Value().ToNumber());
+
+    while (holes.size() > board[0].size()) {
+        holes.erase(holes.cbegin());
+    }
+
+    for (int y = holes.size() - 1; y >= 0; --y) {
+        for (int x = 0; x < board.size(); ++x)
+            board[x][y] = (-(x - board.size() + 1) == holes[-(y - holes.size() + 1)]) ? " " : "G";
+    }
+
+    Napi::Array new_field = Napi::Array::New(info.Env());
+    for (int x = 0; x < board.size(); ++x) {
+        new_field[x] = Napi::Array::New(info.Env());
+        for (int y = 0; y < board[x].size(); ++y)
+            new_field.operator[]((uint32_t) x).operator Napi::Value().As<Napi::Array>().operator[]((uint32_t) y).operator=(Napi::String::New(info.Env(), board[x][y]));
+    }
+
+    return new_field;
 }

@@ -29,6 +29,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set("abort", Napi::Function::New(env, abort_bot));
     exports.Set("is_running", Napi::Function::New(env, is_running));
     exports.Set("apply_piece", Napi::Function::New(env, apply_piece));
+    exports.Set("add_garbage", Napi::Function::New(env, add_garbage));
     return exports;
 }
 

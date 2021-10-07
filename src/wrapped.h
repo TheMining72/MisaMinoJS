@@ -25,5 +25,6 @@ Napi::Boolean aliveW(const Napi::CallbackInfo& info);
 napi_value abort_bot(const Napi::CallbackInfo& info);
 Napi::Boolean is_running(const Napi::CallbackInfo& info);
 Napi::Object apply_piece(const Napi::CallbackInfo& info);
+Napi::Array add_garbage(const Napi::CallbackInfo& info);
 
 #endif

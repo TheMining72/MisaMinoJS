@@ -58,6 +58,8 @@ std::vector<std::string> split(std::string s, std::string delimiter) {
     return res;
 }
 
+const int* from_misamino = new int[7] { 6, 4, 2, 3, 0, 1, 5 };
+
 const std::string to_char[7] = {
     "Z", "S", "L", "J", "T", "O", "I"
 };

@@ -24,7 +24,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set("update_reset", Napi::Function::New(env, update_resetW));
     exports.Set("action", Napi::Function::New(env, actionW));
     exports.Set("alive", Napi::Function::New(env, aliveW));
-    //exports.Set("findpath", Napi::Function::New(env, findpathW));
 
     exports.Set("abort", Napi::Function::New(env, abort_bot));
     exports.Set("is_running", Napi::Function::New(env, is_running));

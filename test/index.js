@@ -1,9 +1,15 @@
 const { MisaMino } = require("../src/index.js");
 
-// 0 = Max Depth
+//  0: Max Depth
+// -1: It'll only calculate for the given milliseconds below, set as this if you want a very fast pps
+// -2: Literally Max PPS, No calculating at all, it'll do what you think would happen
+// Inaccurate though
 const PPS = 30;
 
-// Piece colors for printField()
+// Milliseconds to calculate, will be used when PPS = -1, Setting as 0 is valid as `setTimeout()` takes up a few millseconds
+const CALCULATION_MILLISECONDS = 0;
+
+// Piece colors for printField(), not meant to be changed
 const PIECE_COLORS = {
   Reset: "\x1b[0m",
 
@@ -18,7 +24,7 @@ const PIECE_COLORS = {
   "I": "\x1b[46m  "
 }
 
-// Piece generator
+// Random piece generator
 class PiecesGen {
   constructor(seed) {
     this.startSeed = seed % 2147483647;
@@ -140,6 +146,8 @@ async function play() {
     if (!MisaMino.alive() || !newField.Success) return;
     play();
   });
+  if (PPS == -1) setTimeout(MisaMino.abort, CALCULATION_MILLISECONDS);
+  if (PPS < -1) MisaMino.abort();
 };
 
 // Start

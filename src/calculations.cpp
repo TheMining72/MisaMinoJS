@@ -3,42 +3,20 @@
 #include "calculations.h"
 #include "./MisaMino/MisaMino/main.h"
 
-std::string move() {
-    if (aborting) return "-1";
-    aborting = false;
-    mm_running = true;
-    std::string solution = action();
-    mm_running = false;
-    return solution;
-}
-
 struct move_context {
-    const static void start(move_context* context) {
-        context -> solution = move();
+    const static void move(move_context* context) {
+        running = true;
+        context -> solution = action();
         context -> tsfn.Release();
-        running = false;
     }
 
     move_context(Napi::Env env) : deferred(Napi::Promise::Deferred::New(env)) { };
 
-    // Native Promise returned to JavaScript
     Napi::Promise::Deferred deferred;
-
-    // Native thread
     std::thread nativeThread;
-
     Napi::ThreadSafeFunction tsfn;
-
     std::string solution;
 };
-
-napi_value finished(const Napi::CallbackInfo& info) {
-    //std::vector<napi_value> args = std::vector<napi_value>();
-    //args.push_back(info[0]);
-    //for (Napi::Function f : finished_hook) 
-    //    f.Call(args);
-    return nullptr;
-}
 
 void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context) {
     // Join the thread
@@ -50,7 +28,6 @@ void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context)
         return;
     }
 
-    const int* from_misamino = new int[7] { 6, 4, 2, 3, 0, 1, 5 };
     std::vector<std::string> info = split(context -> solution, "|");
 
     Napi::Array instructions = Napi::Array::New(env);
@@ -80,8 +57,8 @@ void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context)
     solution["FinalX"] = finalX;
     solution["FinalY"] = finalY;
 
+    running = false;
     context -> deferred.Resolve(solution);
-    delete from_misamino;
     delete context;
 }
 
@@ -91,7 +68,7 @@ Napi::Promise start(const Napi::CallbackInfo& info) {
 
     move_data -> tsfn = Napi::ThreadSafeFunction::New(
         info.Env(),
-        Napi::Function::New(info.Env(), finished),
+        Napi::Function::Function(),
         Napi::Object::New(info.Env()),
         "Action",
         0,
@@ -101,7 +78,8 @@ Napi::Promise start(const Napi::CallbackInfo& info) {
         (void*) nullptr
     );
 
-    move_data -> nativeThread = std::thread(move_data -> start, move_data);
+    aborting = false;
+    move_data -> nativeThread = std::thread(move_data -> move, move_data);
 
     return move_data -> deferred.Promise();
 }

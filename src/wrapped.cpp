@@ -17,7 +17,6 @@ extern "C" bool alive();
 extern "C" void findpath(const char* _field, const char* _piece, int x, int y, int r, bool hold, char* str, int len);
 
 bool aborting = false;
-bool mm_running = false;
 bool running = false;
 
 int abort_callback() {
@@ -25,7 +24,7 @@ int abort_callback() {
 }
 
 napi_value abort_bot(const Napi::CallbackInfo& info) {
-    if (mm_running) aborting = true;
+    aborting = true;
     return nullptr;
 }
 
@@ -196,20 +195,13 @@ Napi::Boolean is_running(const Napi::CallbackInfo& info) {
 
 Napi::Value actionW(const Napi::CallbackInfo& info) {
     if (running) napi_throw_error(info.Env(), 0, "Cannot start another action while one is already running");
-    aborting = false;
-    running = true;
-    auto a = Napi::Function::New(info.Env(), start);
-    return a.Call(std::vector<napi_value>());
+    return Napi::Function::New(info.Env(), start).Call(std::vector<napi_value>());
 }
 
 Napi::Boolean aliveW(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     Napi::Boolean returnValue = Napi::Boolean::New(env, alive());
     return returnValue;
-}
-
-napi_value findpathW(const Napi::CallbackInfo& info) {
-    return nullptr;
 }
 
 // Array, Object

@@ -143,7 +143,7 @@ async function play() {
 
     // Continue if not dead
     printField();
-    if (!MisaMino.alive() || !newField.Success) return;
+    if (!newField.Success) return;
     play();
   });
   if (PPS == -1) setTimeout(MisaMino.abort, CALCULATION_MILLISECONDS);

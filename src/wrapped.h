@@ -18,7 +18,6 @@ napi_value update_b2bW(const Napi::CallbackInfo& info);
 napi_value update_fieldW(const Napi::CallbackInfo& info);
 napi_value update_resetW(const Napi::CallbackInfo& info);
 Napi::Value actionW(const Napi::CallbackInfo& info);
-Napi::Boolean aliveW(const Napi::CallbackInfo& info);
 
 napi_value abort_bot(const Napi::CallbackInfo& info);
 Napi::Boolean is_running(const Napi::CallbackInfo& info);

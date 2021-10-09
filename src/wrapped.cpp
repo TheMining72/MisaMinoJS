@@ -13,7 +13,6 @@ extern "C" void update_combo(int combo);
 extern "C" void update_b2b(int b2b);
 extern "C" void update_field(const char* field);
 extern "C" void update_reset();
-extern "C" bool alive();
 extern "C" void findpath(const char* _field, const char* _piece, int x, int y, int r, bool hold, char* str, int len);
 
 bool aborting = false;
@@ -196,12 +195,6 @@ Napi::Boolean is_running(const Napi::CallbackInfo& info) {
 Napi::Value actionW(const Napi::CallbackInfo& info) {
     if (running) napi_throw_error(info.Env(), 0, "Cannot start another action while one is already running");
     return Napi::Function::New(info.Env(), start).Call(std::vector<napi_value>());
-}
-
-Napi::Boolean aliveW(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-    Napi::Boolean returnValue = Napi::Boolean::New(env, alive());
-    return returnValue;
 }
 
 // Array, Object

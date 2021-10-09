@@ -97,7 +97,7 @@ export interface MisaMinoParameters {
   strategy_4w: number;
 }
 
-export declare type Field = (Pieces | "G" | "")[][];
+export declare type Field = (Pieces | "G" | " ")[][];
 
 export declare type Pieces = "Z" | "S" | "L" | "J" | "T" | "O" | "I";
 

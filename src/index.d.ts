@@ -29,7 +29,7 @@ export interface MisaMino {
   update_current(piece: Pieces): null;
 
   /** Sets the held piece, will be used by the `action` that is called. Set as `-1` when none. */
-  update_hold(piece: Pieces | null): null;
+  update_hold(piece?: Pieces | null): null;
 
   /** Sets the amount of garbage in the garbage meter, will be used by the `action` that is called. */
   update_incoming(attack: number): null;
@@ -41,7 +41,7 @@ export interface MisaMino {
   update_b2b(b2b: number): null;
 
   /** Updates the current field to be used by action. (The field parameter uses the format `field[x][y]`)  */
-  update_field(field: Pieces[][]): null;
+  update_field(field: Field): null;
 
   /** Resets the bot. You need to run configure again after running this. */
   update_reset(): null;
@@ -50,21 +50,27 @@ export interface MisaMino {
   action(): Promise<Move>;
 
   /** Is the bot currently alive and hasn't topped out. */
-  alive(): boolean;
+  alive?(): boolean;
 
   /** Is the bot is currently running. */
   is_running(): boolean;
 
   /** Applies a piece on to a field based on a move.  */
-  apply_piece(field: Pieces[][], solution: Move): Pieces[][];
+  apply_piece(
+    field: Field,
+    solution: Move
+  ): { Success: boolean; Field: Field; Combo: boolean };
   /** Applies a piece on to a field based on a piece and it's coordinates.  */
   apply_piece(
-    field: Pieces[][],
+    field: Field,
     piece: Pieces,
     x: number,
     y: number,
     z: number
-  ): Pieces[][];
+  ): { Success: boolean; Field: Field; Combo: boolean };
+
+  /** Adds a new garbage line for every number in holes, sorted from top to bottom. */
+  add_garbage(field: Field, holes: number[]): Field;
 }
 
 export interface MisaMinoParameters {
@@ -90,6 +96,8 @@ export interface MisaMinoParameters {
   tmini: number;
   strategy_4w: number;
 }
+
+export declare type Field = (Pieces | "G" | "")[][];
 
 export declare type Pieces = "Z" | "S" | "L" | "J" | "T" | "O" | "I";
 

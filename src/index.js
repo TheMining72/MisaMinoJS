@@ -3,12 +3,13 @@ const MisaMino = require("bindings")("MisaMinoJS");
 function action() {
   return new Promise((resolve, reject) => {
     MisaMino.action().then((solution) => {
-      solution.FinalR =
-        (solution.Instructions.filter((s) => s == 8).length -
-          solution.Instructions.filter((s) => s == 7).length +
-          solution.Instructions.filter((s) => s == 11).length * 2 +
-          100) %
-        4;
+      if (solution != -1)
+        solution.FinalR =
+          (solution.Instructions.filter((s) => s == 8).length -
+            solution.Instructions.filter((s) => s == 7).length +
+            solution.Instructions.filter((s) => s == 11).length * 2 +
+            100) %
+          4;
       resolve(solution);
     });
   });

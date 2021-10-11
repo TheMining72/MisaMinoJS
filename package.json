@@ -4,7 +4,7 @@
   "description": "MisaMino for Javascript",
   "main": "src/index.js",
   "scripts": {
-    "install": "cmake-js compile",
+    "install": "cmake-js configure && cmake-js compile",
     "build": "cmake-js build",
     "rebuild": "cmake-js rebuild",
     "clean": "cmake-js clean",

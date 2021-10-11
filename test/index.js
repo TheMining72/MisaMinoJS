@@ -6,8 +6,8 @@ const { MisaMino } = require("../src/index.js");
 // Inaccurate though
 const PPS = 30;
 
-// Milliseconds to calculate, will be used when PPS = -1, Setting as 0 is valid as `setTimeout()` takes up a few millseconds
-const CALCULATION_MILLISECONDS = 0;
+// Milliseconds to calculate, will be used when PPS = -1
+const CALCULATION_MILLISECONDS = 2;
 
 // Piece colors for printField(), not meant to be changed
 const PIECE_COLORS = {
@@ -15,13 +15,13 @@ const PIECE_COLORS = {
 
   " ": "\x1b[47m  ",
   "G": "\x1b[48;5;239m  ",
-  "Z": "\x1b[41m  ",
-  "S": "\x1b[42m  ",
+  "Z": "\x1b[48;5;196m  ",
+  "S": "\x1b[48;5;34m  ",
   "L": "\x1b[48;5;208m  ",
-  "J": "\x1b[44m  ",
-  "T": "\x1b[45m  ",
+  "J": "\x1b[48;5;20m  ",
+  "T": "\x1b[48;5;127m  ",
   "O": "\x1b[48;5;220m  ",
-  "I": "\x1b[46m  "
+  "I": "\x1b[48;5;50m  "
 }
 
 // Random piece generator
@@ -123,27 +123,29 @@ async function play() {
   actionPromise.then(solution => {
     clearTimeout(actionTimeout);
 
-    // Field
-    newField = MisaMino.apply_piece(field, solution);
-    field = newField.Field;
+    if (solution != -1) {
+      // Field
+      newField = MisaMino.apply_piece(field, solution);
+      field = newField.Field;
 
-    // Game data
-    piecesPlaced++;
-    b2b = solution.B2B;
-    atk += solution.Attack;
-    depth = solution.Depth;
-    if(newField.Combo) combo++;
-    else combo = 0;
+      // Game data
+      piecesPlaced++;
+      b2b = solution.B2B;
+      atk += solution.Attack;
+      depth = solution.Depth;
+      if(newField.Combo) combo++;
+      else combo = 0;
 
-    // Queue & Hold
-    if (solution.Instructions.includes(10))
-      hold = current;
-    current = queue[0];
-    queue.shift();
+      // Queue & Hold
+      if (solution.Instructions.includes(10))
+        hold = current;
+      current = queue[0];
+      queue.shift();
 
-    // Continue if not dead
-    printField();
-    if (!newField.Success) return;
+      // Continue if not dead
+      printField();
+      if (!newField.Success) return;
+    }
     play();
   });
   if (PPS == -1) setTimeout(MisaMino.abort, CALCULATION_MILLISECONDS);

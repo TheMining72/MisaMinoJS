@@ -4,25 +4,37 @@
 #include "./MisaMino/MisaMino/main.h"
 
 struct move_context {
+    #ifndef _WIN32
+    static void* posix_move(void* context) {
+        ((move_context*) context) -> move((move_context*) context);
+        return nullptr;
+    }
+    #endif
+
     const static void move(move_context* context) {
         running = true;
         context -> solution = action();
+        running = false;
         context -> tsfn.Release();
     }
 
     move_context(Napi::Env env) : deferred(Napi::Promise::Deferred::New(env)) { };
 
     Napi::Promise::Deferred deferred;
+    #ifdef _WIN32
     std::thread nativeThread;
+    #else
+    pthread_t* nativeThread;
+    #endif
     Napi::ThreadSafeFunction tsfn;
     std::string solution;
 };
 
 void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context) {
-    // Join the thread
+    #ifdef _WIN32
     context -> nativeThread.join();
+    #endif
 
-    // Resolve the Promise previously returned to JS
     if (context -> solution == "-1") {
         context -> deferred.Resolve(Napi::Number::New(env, -1));
         return;
@@ -57,7 +69,6 @@ void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context)
     solution["FinalX"] = finalX;
     solution["FinalY"] = finalY;
 
-    running = false;
     context -> deferred.Resolve(solution);
     delete context;
 }
@@ -68,7 +79,7 @@ Napi::Promise start(const Napi::CallbackInfo& info) {
 
     move_data -> tsfn = Napi::ThreadSafeFunction::New(
         info.Env(),
-        Napi::Function::Function(),
+        Napi::Function(),
         Napi::Object::New(info.Env()),
         "Action",
         0,
@@ -79,7 +90,14 @@ Napi::Promise start(const Napi::CallbackInfo& info) {
     );
 
     aborting = false;
+    #ifdef _WIN32
     move_data -> nativeThread = std::thread(move_data -> move, move_data);
+    #else
+    pthread_t action_thread;
+    move_data -> nativeThread = &action_thread;
+    if(pthread_create(&action_thread, nullptr, move_data -> posix_move, (void*) move_data) != 0)
+        napi_throw_error(info.Env(), 0, "pthread creation failed");
+    #endif
 
     return move_data -> deferred.Promise();
 }

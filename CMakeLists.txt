@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.21)
 project(MisaMino)
 file(GLOB SOURCE_FILES "src/MisaMino/MisaMino/*.cpp" "src/MisaMino/MisaMino/*.h")
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+set_property(TARGET MisaMino PROPERTY POSITION_INDEPENDENT_CODE ON)
+# set_property(TARGET MisaMino PROPERTY CMAKE_BUILD_TYPE Debug) # For debugging
 
 # MisaMinoJS, wrapping MisaMino functions for JS to call
 project(MisaMinoJS)

@@ -3,13 +3,18 @@
 #include "./MisaMino/MisaMino/main.h"
 
 bool first_setup = true;
-extern "C" void setup();
-extern "C" void set_abort(Callback handler);
+int get_abort() {
+    return aborting;
+}
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     if (first_setup) {
         setup();
-        set_abort(abort_callback);
+        #ifdef _WIN32
+        set_abort(get_abort);
+        #else
+        set_abort((int*) &aborting);
+        #endif
         first_setup = false;
     }
 

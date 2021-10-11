@@ -4,23 +4,8 @@
 #include "utils.h"
 #include "./MisaMino/MisaMino/main.h"
 
-extern "C" void configure(AI::AI_Param param, bool holdAllowed, bool allSpin, bool TSDonly, int search_width, bool allow180, bool srsplus);
-extern "C" void update_next(const char* queue);
-extern "C" void update_current(const char* piece);
-extern "C" void update_hold(const char* piece);
-extern "C" void update_incoming(int attack);
-extern "C" void update_combo(int combo);
-extern "C" void update_b2b(int b2b);
-extern "C" void update_field(const char* field);
-extern "C" void update_reset();
-extern "C" void findpath(const char* _field, const char* _piece, int x, int y, int r, bool hold, char* str, int len);
-
 bool aborting = false;
 bool running = false;
-
-int abort_callback() {
-    return aborting;
-}
 
 napi_value abort_bot(const Napi::CallbackInfo& info) {
     aborting = true;

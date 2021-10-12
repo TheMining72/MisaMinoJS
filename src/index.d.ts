@@ -28,7 +28,7 @@ export interface MisaMino {
   /** Sets the current piece, will be used by the `action` that is called. Sets the piece that is currently falling. */
   update_current(piece: Pieces): null;
 
-  /** Sets the held piece, will be used by the `action` that is called. Set as `-1` when none. */
+  /** Sets the held piece, will be used by the `action` that is called. Set as `null` when none. */
   update_hold(piece?: Pieces | null): null;
 
   /** Sets the amount of garbage in the garbage meter, will be used by the `action` that is called. */

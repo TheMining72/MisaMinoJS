@@ -1,13 +1,15 @@
+console.clear();
+const readline = require("readline");
 const { MisaMino } = require("../src/index.js");
 
 //  0: Max Depth
 // -1: It'll only calculate for the given milliseconds below, set as this if you want a very fast pps
 // -2: Literally Max PPS, No calculating at all, it'll do what you think would happen
 // Inaccurate though
-const PPS = 30;
+const PPS = -1;
 
 // Milliseconds to calculate, will be used when PPS = -1
-const CALCULATION_MILLISECONDS = 2;
+const CALCULATION_MILLISECONDS = 3;
 
 // Piece colors for printField(), not meant to be changed
 const PIECE_COLORS = {
@@ -70,40 +72,48 @@ for (var x = 0; x < 10; x++) {
 field = MisaMino.add_garbage(field, [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2]);
 
 // Information
-const FRAME = 1000 / 60;
 var atk = 0;
 var piecesPlaced = 0;
 var depth = 0;
 var startTime = Date.now();
 var lastPrintField;
-var printFieldTimeout;
 
 // Prints the field
 function printField() {
-  if (!lastPrintField) lastPrintField = Date.now();
-  else if ((Date.now() - lastPrintField) < FRAME) {
-    printFieldTimeout = setTimeout(printField, FRAME - (Date.now() - lastPrintField));
-    return;
-  };
-  clearTimeout(printFieldTimeout);
-  lastPrintField = Date.now();
   let log = [];
 
   for (let y = field[0].length - 1; y >= 0; y--) {
     log.push([]);
     for (let x = field.length - 1; x >= 0; x--)
       log[field[0].length - y - 1].push(PIECE_COLORS[field[x][y]]);
-    log[field[0].length - y - 1].push("\n" + PIECE_COLORS.Reset);
+    log[field[0].length - y - 1].push(PIECE_COLORS.Reset + ' '.repeat(process.stdout.columns - 20));
     log[field[0].length - y - 1] = log[field[0].length - y - 1].join("");
   }
-  console.clear();
+  readline.cursorTo(process.stdout, 0, 0);
+  var curSec = (Date.now() - startTime) / 1000;
+
   console.log(log.join(""));
 
-  console.log(`[${hold}] ${current} ${queue.join("")} >`);
-  console.log(`Depth: ${depth}`);
-  console.log(`Combo: ${combo} B2B: ${b2b}`);
-  var curSec = (Date.now() - startTime) / 1000;
-  console.log(`PPS: ${(piecesPlaced / curSec).toFixed(2)} APP: ${(atk / piecesPlaced).toFixed(2)} APM: ${(atk / (curSec / 60)).toFixed(2)} APS: ${(atk / curSec).toFixed(2)}`);
+  queueLog = `[${hold}] ${current} ${queue.join("")}`;
+  queueLogSpace = process.stdout.columns - queueLog.length - 1;
+  while (queueLogSpace < 0) queueLogSpace += process.stdout.columns;
+
+  depthLog = `Depth: ${depth}`;
+  depthLogSpace = process.stdout.columns - depthLog.length - 1;
+  while (depthLogSpace < 0) depthLogSpace += process.stdout.columns;
+
+  gameLog = `Combo: ${combo} B2B: ${b2b}`;
+  gameLogSpace = process.stdout.columns - gameLog.length - 1;
+  while (gameLogSpace < 0) gameLogSpace += process.stdout.columns;
+
+  infoLog = `PPS: ${(piecesPlaced / curSec).toFixed(2)} APP: ${(atk / piecesPlaced).toFixed(2)} APM: ${(atk / (curSec / 60)).toFixed(2)} APS: ${(atk / curSec).toFixed(2)}`;
+  infoLogSpace = process.stdout.columns - infoLog.length - 1;
+  while (infoLogSpace < 0) infoLogSpace += process.stdout.columns;
+
+  console.log(queueLog, ' '.repeat(queueLogSpace));
+  console.log(depthLog, ' '.repeat(depthLogSpace));
+  console.log(gameLog, ' '.repeat(gameLogSpace));
+  console.log(infoLog, ' '.repeat(infoLogSpace));
 }
 printField();
 
@@ -111,9 +121,10 @@ printField();
 MisaMino.configure({avoid_softdrop: 0});
 let nextBag = queueGen.nextBag();
 
-async function play() {
+function play() {
   // Queue
   nextBag.length <= 1 && nextBag.push(...queueGen.nextBag());
+  if (queue.length <= 35)
   queue.push(...nextBag.splice(0, 1));
 
   // Give game data to MisaMinoJS
@@ -161,6 +172,16 @@ async function play() {
   if (PPS == -1) setTimeout(MisaMino.abort, CALCULATION_MILLISECONDS);
   if (PPS < -1) MisaMino.abort();
 };
+
+process.on('SIGINT', function() {
+  readline.cursorTo(process.stdout, 0, process.stdout.rows);
+  process.exit();
+});
+
+process.stdout.on("resize", () => {
+  console.clear();
+  printField();
+});
 
 // Start
 play();

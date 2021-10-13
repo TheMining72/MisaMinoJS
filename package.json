@@ -4,7 +4,6 @@
   "description": "MisaMino for Javascript",
   "main": "src/index.js",
   "scripts": {
-    "install": "cmake-js configure && cmake-js compile",
     "build": "cmake-js build",
     "rebuild": "cmake-js rebuild",
     "clean": "cmake-js clean",
@@ -13,9 +12,11 @@
   "author": "TheMining72 & SuperFire",
   "license": "MIT",
   "dependencies": {
-    "bindings": "^1.5.0",
+    "bindings": "^1.5.0"
+  },
+  "types": "./src/index.d.ts",
+  "devDependencies": {
     "cmake-js": "^6.2.1",
     "node-addon-api": "^4.2.0"
-  },
-  "types": "./src/index.d.ts"
+  }
 }

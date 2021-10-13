@@ -1,4 +1,15 @@
-const MisaMino = require("bindings")("MisaMinoJS");
+const fs = require("fs");
+const MisaMino = (() => {
+  if (fs.existsSync("./build"))
+    try {
+      return require("bindings")("MisaMinoJS");
+    }
+    catch (err) {
+      console.error("\nFound development build folder but couldn't find the built module, remove the folder to use a prebuilt module.\n");
+      throw err;
+    }
+  else return require(`../prebuilt/MisaMinoJS-${process.platform}-${process.arch}.node`);
+})();
 
 function action() {
   return new Promise((resolve, reject) => {

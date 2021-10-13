@@ -92,7 +92,7 @@ function printField() {
   readline.cursorTo(process.stdout, 0, 0);
   var curSec = (Date.now() - startTime) / 1000;
 
-  console.log(log.join(""));
+  console.log(log.join(""), " ");
 
   queueLog = `[${hold}] ${current} ${queue.join("")}`;
   queueLogSpace = process.stdout.columns - queueLog.length - 1;

@@ -8,7 +8,14 @@ const MisaMino = (() => {
       console.error("\nFound development build folder but couldn't find the built module, remove the folder to use a prebuilt module.\n");
       throw err;
     }
-  else return require(`../prebuilt/MisaMinoJS-${process.platform}-${process.arch}.node`);
+  else {
+    try {
+      return require(`../prebuilt/MisaMinoJS-${process.platform}-${process.arch}.node`);
+    }
+    catch (err) {
+      throw new Error("MisaMinoJS is incompatible with your system\n" + err.toString());
+    }
+  };
 })();
 
 function action() {

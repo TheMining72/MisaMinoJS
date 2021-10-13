@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build and commit prebuilt binaries
         run: |
+          git submodule init
+          git submodule update
           npm i
           npm run rebuild
           ECHO F|xcopy build\Release\MisaMinoJS.node prebuilt\MisaMinoJS-win32-x64.node /y
@@ -39,6 +41,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build and commit prebuilt binaries
         run: |
+          git submodule init
+          git submodule update
           npm i
           npm run rebuild
           mkdir -p prebuilt
@@ -59,6 +63,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build and commit prebuilt binaries
         run: |
+          git submodule init
+          git submodule update
           npm i
           npm run rebuild
           mkdir -p prebuilt

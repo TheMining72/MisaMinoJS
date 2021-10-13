@@ -1,0 +1,71 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - 'src/MisaMino'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - uses: actions/checkout@v2
+      - name: Build and commit prebuilt binaries
+        run: |
+          npm i
+          npm run rebuild
+          ECHO F|xcopy build\Release\MisaMinoJS.node prebuilt\MisaMinoJS-win32-x64.node /y
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git pull origin master
+          git commit -m "Update prebuilt binaries for Windows" --allow-empty
+          git push
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - uses: actions/checkout@v2
+      - name: Build and commit prebuilt binaries
+        run: |
+          npm i
+          npm run rebuild
+          mkdir -p prebuilt
+          cp build/Release/MisaMinoJS.node prebuilt/MisaMinoJS-linux-x64.node
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git pull origin master
+          git commit -m "Update prebuilt binaries for Linux" --allow-empty
+          git push
+
+  build-macos:
+    runs-on: macos-11
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - uses: actions/checkout@v2
+      - name: Build and commit prebuilt binaries
+        run: |
+          npm i
+          npm run rebuild
+          mkdir -p prebuilt
+          /bin/cp -rf build/Release/MisaMinoJS.node prebuilt/MisaMinoJS-darwin-x64.node
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git pull origin master
+          git commit -m "Update prebuilt binaries for MacOS" --allow-empty
+          git push

@@ -5,9 +5,20 @@ function action() {
     MisaMino.action().then((solution) => {
       if (solution != -1)
         solution.FinalR =
-          (solution.Instructions.filter((s) => s == 8).length -
-            solution.Instructions.filter((s) => s == 7).length +
-            solution.Instructions.filter((s) => s == 11).length * 2 +
+          (solution.Instructions.reduce((acc, val) => {
+            switch (val) {
+              case 8:
+                acc++;
+                break;
+              case 7:
+                acc--;
+                break;
+              case 11:
+                acc = acc + 2;
+                break;
+            }
+            return acc;
+          }, 0) +
             100) %
           4;
       resolve(solution);

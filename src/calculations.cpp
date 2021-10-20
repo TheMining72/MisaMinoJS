@@ -7,6 +7,7 @@ struct move_context {
     #ifndef _WIN32
     static void* posix_move(void* context) {
         ((move_context*) context) -> move((move_context*) context);
+        pthread_exit(nullptr);
         return nullptr;
     }
     #endif
@@ -24,7 +25,7 @@ struct move_context {
     #ifdef _WIN32
     std::thread nativeThread;
     #else
-    pthread_t* nativeThread;
+    pthread_t nativeThread;
     #endif
     Napi::ThreadSafeFunction tsfn;
     std::string solution;
@@ -33,6 +34,9 @@ struct move_context {
 void FinalizerCallback(Napi::Env env, void *finalizeData, move_context *context) {
     #ifdef _WIN32
     context -> nativeThread.join();
+    #else
+    void* thread_retval;
+    pthread_join(context -> nativeThread, &thread_retval);
     #endif
 
     if (context -> solution == "-1") {
@@ -93,9 +97,7 @@ Napi::Promise start(const Napi::CallbackInfo& info) {
     #ifdef _WIN32
     move_data -> nativeThread = std::thread(move_data -> move, move_data);
     #else
-    pthread_t action_thread;
-    move_data -> nativeThread = &action_thread;
-    if(pthread_create(&action_thread, nullptr, move_data -> posix_move, (void*) move_data) != 0)
+    if(pthread_create(&move_data -> nativeThread, nullptr, move_data -> posix_move, (void*) move_data) != 0)
         napi_throw_error(info.Env(), 0, "pthread creation failed");
     #endif
 

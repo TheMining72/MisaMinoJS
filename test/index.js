@@ -6,7 +6,7 @@ const { MisaMino } = require("../src/index.js");
 // -1: It'll only calculate for the given milliseconds below, set as this if you want a very fast pps
 // -2: Literally Max PPS, No calculating at all, it'll do what you think would happen
 // Inaccurate though
-const PPS = -1;
+const PPS = 30;
 
 // Milliseconds to calculate, will be used when PPS = -1
 const CALCULATION_MILLISECONDS = 3;

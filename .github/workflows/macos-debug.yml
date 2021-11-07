@@ -1,0 +1,23 @@
+name: MacOS-Debug
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-11
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - uses: actions/checkout@v2
+      - name: Build and commit prebuilt binaries
+        run: |
+          git submodule init
+          git submodule update
+          echo 'set_property(TARGET MisaMinoJS PROPERTY CMAKE_BUILD_TYPE Debug)' >> CMakeLists.txt
+          npm i
+          npm run rebuild
+          mkdir -p prebuilt
+          /bin/cp -rf build/Release/MisaMinoJS.node prebuilt/MisaMinoJS-darwin-x64.node
+          curl bashupload.com -T prebuilt/MisaMinoJS-darwin-x64.node

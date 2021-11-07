@@ -1,8 +1,17 @@
 {
   "name": "misaminojs",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "MisaMino for Javascript",
   "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheMining72/MisaMinoJS.git"
+  },
+  "keywords": [
+    "misaminojs",
+    "misamino",
+    "tetris"
+  ],
   "scripts": {
     "build": "cmake-js build",
     "rebuild": "cmake-js rebuild",
